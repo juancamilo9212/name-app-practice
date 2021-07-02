@@ -1,0 +1,6 @@
+export const actionTypes = {
+    GET_ALL_NAMES:'GET_ALL_NAMES',
+    CREATE_NAME:'CREATE_NAME',
+    UPDATE_NAME:'UPDATE_NAME',
+    REMOVE_NAME:'REMOVE_NAME'
+}
