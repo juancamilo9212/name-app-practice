@@ -1,9 +1,11 @@
 import React,{useEffect,useState} from 'react';
 import {useDispatch,useSelector} from 'react-redux';
-import {Table, Button, Space, Input, Form} from 'antd';
+import {Table, Button, Space, Input, Form,notification} from 'antd';
+import "antd/dist/antd.css";
 import {getNames,updateName,removeName} from '../redux/actions/nameActions.js';
 import {getAllNamesAPI,removeNameAPI,updateNameAPI} from '../api/apiCalls.js';
 import moment from 'moment';
+import {fieldValidation} from '../utils/utils.js';
 
 const EditableCell = ({
     editing,
@@ -44,8 +46,6 @@ const NameTable = () => {
     const [editable, setEditable] = useState(false);
     const names = useSelector(state => state.allNames.data);
     const [editingKey, setEditingKey] = useState('');
-
-    console.log(editingKey);
     
     const dispatch = useDispatch();
     
@@ -77,11 +77,19 @@ const NameTable = () => {
         const {id} = record;
         const rowValue = await form.validateFields();
         const {nombre} = rowValue;
-        updateNameAPI(id,{nombre:nombre}).then(response => {
-          dispatch(updateName(response));
+        const isValid = fieldValidation(nombre);
+        if(isValid){
+          updateNameAPI(id,{nombre:nombre}).then(response => {
+            dispatch(updateName(response));
+          });
+          setEditingKey('');
+          setEditable(false);
+        }else{
+          notification.error({
+            message:'Debes ingresar un nombre válido'
         });
-        setEditingKey('');
-        setEditable(false);
+        }
+        
       } catch (error) {
         console.log(error);
       }
@@ -174,6 +182,7 @@ const NameTable = () => {
         bordered
         pagination={{
             onChange: cancel,
+            position:['bottomCenter']
         }}
         />
         </Form>
